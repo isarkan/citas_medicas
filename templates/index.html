@@ -3,9 +3,8 @@
 
 <head>
     <title>Registro Personas</title>
-    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
 </head>
 
 <body>
@@ -37,7 +36,7 @@
             <input id="hora_cita" type="text" placeholder="Hora de Cita">
         </div>
         <div class="form-group">
-            <label for="tipo de cita">Tipo de Cita *</label>
+            <label for="tipo_cita">Tipo de Cita *</label>
             <select id="tipo_cita">
                 <option value="">Selecciona un tipo de cita</option>
                 <option value="Cardiología">Cardiología</option>
@@ -56,129 +55,19 @@
             <label for="motivo">Motivo de la Consulta *</label>
             <textarea id="motivo" name="motivo" required></textarea>
         </div>
-        <button onclick="crear(); limpiar()">Guardar</button>
+        <button type="button" onclick="crear(); limpiar()">Guardar</button>
     </div>
 
     <!-- <div class="container">
         <h2>Datos</h2>
         <ul id="lista"></ul> -->
-    
-        <script>
-
-            async function cargar() {
-                let res = await fetch("/datos")
-                let data = await res.json()
-
-                let lista = document.getElementById("lista")
-                lista.innerHTML = ""
-
-                data.forEach(p => {
-                    // lista.innerHTML += `<li>${p.id} - ${p.nombre} - ${p.edad}</li>`
-                })
-            }
-
-            async function crear() {
-
-                let data = {
-                    id: document.getElementById("id").value,
-                    nombre: document.getElementById("nombre").value,
-                    correo: document.getElementById("correo").value,
-                    fecha_nacimiento: document.getElementById("fecha_nacimiento").value,
-                    fecha_cita: document.getElementById("fecha_cita").value,
-                    hora_cita: document.getElementById("hora_cita").value,
-                    tipo_cita: document.getElementById("tipo_cita").value,
-                    codigo_cita: document.getElementById("codigo_cita").value,
-                    motivo: document.getElementById("motivo").value
-                }
-
-                await fetch("/crear", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
-                })
-
-                cargar()
-            }
-
-            cargar()
-        </script>
-        <script>
-            function limpiar() {
-                document.getElementById("id").value = "";
-                document.getElementById("nombre").value = "";
-                document.getElementById("correo").value = "";
-                document.getElementById("fecha_nacimiento").value = "";
-                document.getElementById("fecha_cita").value = "";
-                document.getElementById("hora_cita").value = "";
-                document.getElementById("tipo_cita").value = "";
-                document.getElementById("codigo_cita").value = "";
-                document.getElementById("motivo").value = "";
-            }
-        </script>
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-        <script>
-            flatpickr("#fecha_cita", {
-                dateFormat: "Y-m-d",
-                // Mínimo: mañana
-                minDate: new Date().fp_incr(1),
-                // Máximo: último día del siguiente mes
-                maxDate: (function () {
-                    let hoy = new Date();
-                    // Ir al siguiente mes
-                    let siguienteMes = new Date(hoy.getFullYear(), hoy.getMonth() + 2, 0);
-                    // +2 y día 0 = último día del siguiente mes
-                    return siguienteMes;
-                })(),
-                // Bloquear sábados y domingos
-                disable: [
-                    function (date) {
-                        return (date.getDay() === 0 || date.getDay() === 6);
-                    }
-                ]
-            });
-        </script>
-        <script>
-            function generarHoras() {
-                let horas = [];
-
-                function agregarRango(inicio, fin) {
-                    let [h, m] = inicio.split(":").map(Number);
-                    let [hFin, mFin] = fin.split(":").map(Number);
-
-                    let fecha = new Date();
-                    fecha.setHours(h, m, 0);
-
-                    while (true) {
-                        let hora = fecha.getHours().toString().padStart(2, "0");
-                        let min = fecha.getMinutes().toString().padStart(2, "0");
-                        horas.push(`${hora}:${min}`);
-
-                        // salir cuando llegue al límite
-                        if (hora == hFin.toString().padStart(2, "0") &&
-                            min == mFin.toString().padStart(2, "0")) break;
-
-                        fecha.setMinutes(fecha.getMinutes() + 30);
-                    }
-                }
-
-                // Rangos permitidos
-                agregarRango("08:00", "11:30");
-                agregarRango("14:00", "17:30");
-
-                return horas;
-            }
-
-            flatpickr("#hora_cita", {
-                enableTime: true,
-                noCalendar: true,
-                dateFormat: "H:i",
-                minuteIncrement: 30,
-
-                enable: generarHoras()
-            });
-        </script>
-        
     <!-- </div> -->
+     
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="{{ url_for('static', filename='js/archivo.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/fecha_cita.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/hora_cita.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/limpiar.js') }}"></script>
 
 </body>
 
