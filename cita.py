@@ -112,6 +112,51 @@ def eliminar(id):
     except:
         return {"error": "No hay datos hoy"}
 
+import requests
+import json
+
+@app.route("/enviar", methods=["GET", "POST"])
+def enviar():
+
+    # ✅ Primero manejar GET
+    if request.method == "GET":
+        return {"mensaje": "Endpoint activo (usa POST)"}
+
+    # ✅ Luego procesar POST
+    data = request.get_json(silent=True)
+
+    if not data:
+        data = request.form.to_dict()
+
+    datos_mapeados = {
+        "id": data.get("id"),
+        "nombre": data.get("nombre"),
+        "edad": data.get("edad"),
+        "telefono": data.get("telefono"),
+        "email": data.get("email"),
+        "fecha_cita": data.get("fecha_cita"),
+        "hora_cita": data.get("hora_cita"),
+        "motivo": data.get("motivo"),
+        "medico": data.get("medico"),
+        "consultorio": data.get("consultorio")
+    }
+
+    url_otro_sistema = "URL"
+
+    try:
+        respuesta = requests.post(url_otro_sistema, json=datos_mapeados)
+
+        print(json.dumps(datos_mapeados, indent=4, ensure_ascii=False))
+
+        return {
+            "mensaje": "Datos enviados",
+            "status": respuesta.status_code,
+            "json_enviado": datos_mapeados,
+            "respuesta_api": respuesta.text
+        }
+
+    except Exception as e:
+        return {"error": str(e)}, 500
 
 if __name__ == "__main__":
     app.run(debug=True)

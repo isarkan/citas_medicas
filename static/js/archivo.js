@@ -3,7 +3,7 @@ async function cargar() {
     let data = await res.json()
 
     let lista = document.getElementById("lista")
-    lista.innerHTML = ""
+    // lista.innerHTML = ""
 
     data.forEach(p => {
         // lista.innerHTML += `<li>${p.id} - ${p.nombre} - ${p.edad}</li>`
